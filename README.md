@@ -18,7 +18,7 @@ Open http://127.0.0.1:8765. SQLite data and uploaded evidence are saved under `d
 - Create property inspections and rooms with manually entered dimensions.
 - Upload JPEG/PNG/WebP evidence and review it locally.
 - Generate optional vision AI scope suggestions through OpenAI's API (requires `OPENAI_API_KEY`); **uploaded photos are transmitted to the configured external provider** when this is used.
-- Add/edit estimate scope line items (manual entry, quantities and unit prices), export JSON and print to PDF in the browser.
+- Add/remove estimate scope line items (manual entry, quantities and unit prices), export JSON and print to PDF in the browser.
 - Import licensed or personally collected supplier prices from CSV, with ZIP, SKU, date, supplier and rights metadata.
 - Resolve matching local price observations; exact ZIP first, explicitly nationwide quotes as fallback.
 - Price three illustrative drywall, paint and laminate assemblies using component inputs and labor assumptions, refusing a recipe when a required quote is missing.
