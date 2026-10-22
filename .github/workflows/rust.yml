@@ -1,0 +1,17 @@
+name: Rust MVP checks
+
+on:
+  push:
+    branches: ["feature/**", "main"]
+  pull_request:
+
+jobs:
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Test
+        run: cargo test --all-targets
+      - name: Compile release
+        run: cargo build --release
