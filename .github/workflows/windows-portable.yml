@@ -1,0 +1,33 @@
+name: Windows portable build
+
+on:
+  pull_request:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+jobs:
+  portable-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Test
+        run: cargo test --all-targets
+      - name: Build release binary
+        run: cargo build --release
+      - name: Stage portable distribution
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist/Quantimate | Out-Null
+          Copy-Item target/release/quantimate.exe dist/Quantimate/Quantimate.exe
+          Copy-Item scripts/Launch-Quantimate.cmd dist/Quantimate/Launch-Quantimate.cmd
+          Copy-Item LICENSE dist/Quantimate/LICENSE
+          Copy-Item README.md dist/Quantimate/README.md
+          Copy-Item -Recurse samples dist/Quantimate/samples
+      - name: Upload portable Windows app
+        uses: actions/upload-artifact@v4
+        with:
+          name: Quantimate-Windows-x64-portable
+          path: dist/Quantimate/
+          if-no-files-found: error
