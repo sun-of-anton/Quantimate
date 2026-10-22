@@ -2,7 +2,23 @@
 
 **Status:** Experimental Rust-first source MVP, not Xactimate feature parity. Quantimate is an independently implemented, local-first property damage estimating workspace with photo evidence, optional external vision-model recommendations, and an auditable materials/labor pricing catalog.
 
-## Run locally
+## Windows end users: no Rust installation required
+
+Once the Windows GitHub Actions job passes, download the **Quantimate-Windows-x64** artifact from the latest successful [CI run](https://github.com/sun-of-anton/Quantimate/actions/workflows/rust.yml). The workflow uploads the ready-to-extract ZIP directly (no nested archive). After a version tag is published, the same ZIP is available publicly from [GitHub Releases](https://github.com/sun-of-anton/Quantimate/releases) without requiring users to navigate CI.
+
+Extract the portable ZIP, then **double-click `Launch-Quantimate.cmd`**. The launcher starts `Quantimate.exe` (a local Rust-powered HTTP server) and opens your default web browser at http://127.0.0.1:8765.
+
+- Rust, Cargo, Node, Python, and admin permissions are **not required** to run a prebuilt ZIP.
+- The local console window must remain open while working. Closing it stops Quantimate.
+- Inspections and uploaded photos persist under `%LOCALAPPDATA%\\Quantimate` (not inside the downloaded ZIP). Back up that directory.
+- This is **not yet a signed Windows installer or standalone graphical desktop app**. Microsoft SmartScreen or endpoint policy may restrict unsigned executables.
+- Optional AI analysis requires a user-provided `OPENAI_API_KEY` and sends selected evidence to an external AI provider. Manual estimating is offline after installation.
+
+See `packaging/windows/README-Windows.txt` for end-user operating instructions. To publish a version after a green build and reviewed merge, push a tag such as `v0.2.1`; GitHub Actions runs tests and publishes a prerelease download.
+
+## Run from source (developers)
+
+
 
 Install a recent stable Rust toolchain. From the repository root:
 
@@ -30,7 +46,7 @@ In the app, open **Price intelligence** and import `samples/SYNTHETIC-prices.csv
 
 ## Current limitations
 
-This is **source-only and not compiled or tested in the current delivery environment**. It is **not production-ready**. It does *not* reconstruct 3D geometry, estimate from images automatically without human approval, support complete carrier workflows, or provide Xactimate functional parity. See `docs/PARITY-ROADMAP.md` for remaining work.
+GitHub Actions is configured to compile, test, and smoke-test Windows portable builds. Confirm a green run before distributing an executable. It is **not production-ready**. It does *not* reconstruct 3D geometry, estimate from images automatically without human approval, support complete carrier workflows, or provide Xactimate functional parity. See `docs/PARITY-ROADMAP.md` for remaining work.
 
 ## Data, model and privacy rules
 
