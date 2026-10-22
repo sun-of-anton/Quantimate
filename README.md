@@ -4,7 +4,7 @@
 
 ## Windows end users: no Rust installation required
 
-Once the Windows GitHub Actions job passes, download the **Quantimate-Windows-x64** artifact from the latest successful [CI run](https://github.com/sun-of-anton/Quantimate/actions/workflows/rust.yml). GitHub packages that artifact download as a ZIP; extract its inner `Quantimate-Windows-x64.zip` too, if present.
+Once the Windows GitHub Actions job passes, download the **Quantimate-Windows-x64** artifact from the latest successful [CI run](https://github.com/sun-of-anton/Quantimate/actions/workflows/rust.yml). The workflow uploads the ready-to-extract ZIP directly (no nested archive). After a version tag is published, the same ZIP is available publicly from [GitHub Releases](https://github.com/sun-of-anton/Quantimate/releases) without requiring users to navigate CI.
 
 Extract the portable ZIP, then **double-click `Launch-Quantimate.cmd`**. The launcher starts `Quantimate.exe` (a local Rust-powered HTTP server) and opens your default web browser at http://127.0.0.1:8765.
 
@@ -14,7 +14,7 @@ Extract the portable ZIP, then **double-click `Launch-Quantimate.cmd`**. The lau
 - This is **not yet a signed Windows installer or standalone graphical desktop app**. Microsoft SmartScreen or endpoint policy may restrict unsigned executables.
 - Optional AI analysis requires a user-provided `OPENAI_API_KEY` and sends selected evidence to an external AI provider. Manual estimating is offline after installation.
 
-See `packaging/windows/README-Windows.txt` for end-user operating instructions.
+See `packaging/windows/README-Windows.txt` for end-user operating instructions. To publish a version after a green build and reviewed merge, push a tag such as `v0.2.1`; GitHub Actions runs tests and publishes a prerelease download.
 
 ## Run from source (developers)
 
