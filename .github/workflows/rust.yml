@@ -1,17 +1,76 @@
-name: Rust MVP checks
+name: Quantimate CI and Windows portable build
 
 on:
   push:
-    branches: ["feature/**", "main"]
+    branches: ["main", "feature/**"]
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
-  rust:
+  rust-linux:
+    name: Linux compile and tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: dtolnay/rust-toolchain@stable
       - name: Test
         run: cargo test --all-targets
       - name: Compile release
         run: cargo build --release
+
+  windows-portable:
+    name: Windows tests and portable EXE
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Test
+        run: cargo test --all-targets
+      - name: Compile Windows EXE
+        run: cargo build --release
+      - name: Smoke-test local application
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $env:QUANTIMATE_DATA = Join-Path $env:RUNNER_TEMP 'quantimate-smoke-data'
+          $exe = Join-Path $PWD 'target/release/quantimate.exe'
+          $process = Start-Process -FilePath $exe -PassThru
+          try {
+            $ready = $false
+            for ($i = 0; $i -lt 30; $i++) {
+              if ($process.HasExited) { throw "Quantimate exited before the health probe succeeded." }
+              try {
+                Invoke-RestMethod -Uri 'http://127.0.0.1:8765/api/projects' -TimeoutSec 2 | Out-Null
+                $ready = $true
+                break
+              } catch {
+                Start-Sleep -Seconds 1
+              }
+            }
+            if (-not $ready) { throw "Quantimate did not start a working local HTTP server." }
+            Write-Output 'Windows executable started and served the projects endpoint.'
+          } finally {
+            Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
+          }
+      - name: Create portable Windows ZIP
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $bundle = 'dist/Quantimate'
+          New-Item -ItemType Directory -Force -Path $bundle | Out-Null
+          Copy-Item 'target/release/quantimate.exe' "$bundle/Quantimate.exe"
+          Copy-Item 'packaging/windows/Launch-Quantimate.cmd' "$bundle/Launch-Quantimate.cmd"
+          Copy-Item 'packaging/windows/README-Windows.txt' "$bundle/README-Windows.txt"
+          Copy-Item LICENSE "$bundle/LICENSE.txt"
+          New-Item -ItemType Directory -Force -Path "$bundle/samples" | Out-Null
+          Copy-Item 'samples/SYNTHETIC-prices.csv' "$bundle/samples/SYNTHETIC-prices.csv"
+          Compress-Archive -Path $bundle -DestinationPath 'dist/Quantimate-Windows-x64.zip' -CompressionLevel Optimal
+      - uses: actions/upload-artifact@v6
+        with:
+          name: Quantimate-Windows-x64
+          path: dist/Quantimate-Windows-x64.zip
+          if-no-files-found: error
+          retention-days: 30
