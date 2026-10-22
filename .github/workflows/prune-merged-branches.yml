@@ -60,6 +60,21 @@ jobs:
                   (p['head'].get('repo') or {}).get('full_name')==repo and
                   p['head']['sha']==sha]
               if not matches:
+                  # One reviewed legacy PR (#2) was superseded by merged PR #3.
+                  # Delete only the exact unchanged obsolete branch, never a new revision.
+                  if (repo=='sun-of-anton/Quantimate' and
+                      name=='fix/compile-and-windows-portable' and
+                      sha=='8a9c500a0dde770b055ff3f8a862217e88b30b6d'):
+                      obsolete=api('/pulls/2')
+                      replacement=api('/pulls/3')
+                      code_old=api('/contents/src/main.rs?ref=fix/compile-and-windows-portable')
+                      code_new=api('/contents/src/main.rs?ref=main')
+                      if (obsolete['state']=='closed' and not obsolete.get('merged_at') and
+                          replacement.get('merged_at') and code_old['sha']==code_new['sha']):
+                          ref='/git/refs/heads/'+urllib.parse.quote(name,safe='/')
+                          api(ref,'DELETE')
+                          print('DELETED superseded unchanged branch (PR #2 replaced by merged #3):',name)
+                          continue
                   print('KEEP unverified or changed branch:',name)
                   continue
               ref='/git/refs/heads/'+urllib.parse.quote(name,safe='/')
