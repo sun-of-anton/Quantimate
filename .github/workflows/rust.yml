@@ -71,7 +71,7 @@ jobs:
           Compress-Archive -Path $bundle -DestinationPath 'dist/Quantimate-Windows-x64.zip' -CompressionLevel Optimal
       - uses: actions/upload-artifact@v7
         with:
-          name: Quantimate-Windows-x64
+          name: Quantimate-Windows-x64.zip
           path: dist/Quantimate-Windows-x64.zip
           if-no-files-found: error
           retention-days: 30
@@ -87,11 +87,12 @@ jobs:
     steps:
       - uses: actions/download-artifact@v8
         with:
-          name: Quantimate-Windows-x64
+          name: Quantimate-Windows-x64.zip
           path: dist
       - name: Publish download on GitHub Releases
         env:
           GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
         run: |
           if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
             gh release upload "$GITHUB_REF_NAME" dist/Quantimate-Windows-x64.zip --clobber
