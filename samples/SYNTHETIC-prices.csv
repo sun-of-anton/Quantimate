@@ -1,0 +1,8 @@
+item_key,description,component_type,unit,package_price,package_quantity,zip_code,supplier,sku,observed_at,source_url,rights_note
+drywall_half_in,Half inch drywall panel 4x8,material,SF,18,32,00000,DEMO SUPPLIER,SIM-001,2026-10-22,,SYNTHETIC DEMO ONLY
+drywall_install_labor,Drywall installation labor,labor,HR,44,1,00000,DEMO CONTRACTOR,SIM-002,2026-10-22,,SYNTHETIC DEMO ONLY
+drywall_finish_labor,Drywall finishing labor,labor,HR,48,1,00000,DEMO CONTRACTOR,SIM-003,2026-10-22,,SYNTHETIC DEMO ONLY
+interior_paint_material,Interior wall paint,material,GAL,32,1,00000,DEMO SUPPLIER,SIM-004,2026-10-22,,SYNTHETIC DEMO ONLY
+painter_labor,Painting labor,labor,HR,42,1,00000,DEMO CONTRACTOR,SIM-005,2026-10-22,,SYNTHETIC DEMO ONLY
+laminate_flooring,Laminate flooring,material,SF,55,20,00000,DEMO SUPPLIER,SIM-006,2026-10-22,,SYNTHETIC DEMO ONLY
+flooring_install_labor,Flooring installation labor,labor,HR,48,1,00000,DEMO CONTRACTOR,SIM-007,2026-10-22,,SYNTHETIC DEMO ONLY
