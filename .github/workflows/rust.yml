@@ -3,6 +3,7 @@ name: Quantimate CI and Windows portable build
 on:
   push:
     branches: ["main", "feature/**"]
+    tags: ["v*"]
   pull_request:
   workflow_dispatch:
 
@@ -68,9 +69,32 @@ jobs:
           New-Item -ItemType Directory -Force -Path "$bundle/samples" | Out-Null
           Copy-Item 'samples/SYNTHETIC-prices.csv' "$bundle/samples/SYNTHETIC-prices.csv"
           Compress-Archive -Path $bundle -DestinationPath 'dist/Quantimate-Windows-x64.zip' -CompressionLevel Optimal
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: Quantimate-Windows-x64
           path: dist/Quantimate-Windows-x64.zip
           if-no-files-found: error
           retention-days: 30
+          archive: false
+
+  publish-release:
+    name: Publish tagged Windows download
+    needs: [rust-linux, windows-portable]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: Quantimate-Windows-x64
+          path: dist
+      - name: Publish download on GitHub Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" dist/Quantimate-Windows-x64.zip --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" dist/Quantimate-Windows-x64.zip --generate-notes --verify-tag --prerelease
+          fi
