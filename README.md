@@ -2,6 +2,12 @@
 
 **Status:** Experimental Rust-first source MVP, not Xactimate feature parity. Quantimate is an independently implemented, local-first property damage estimating workspace with photo evidence, optional external vision-model recommendations, and an auditable materials/labor pricing catalog.
 
+## Portable Windows distribution (after successful GitHub Actions build)
+
+Users receiving a **Windows portable ZIP** do not need Rust, Cargo, Python, or a separately installed SQLite database. Download the `Quantimate-Windows-x64-portable` artifact from a successful [Windows portable build](https://github.com/sun-of-anton/Quantimate/actions/workflows/windows-portable.yml) run, extract the entire archive into a writable folder (for example, Documents), and double-click `Launch-Quantimate.cmd`. The launcher starts the local server and opens `http://127.0.0.1:8765` in the default browser. Close the Quantimate server console window to stop the app.
+
+The app creates a `data/` folder next to the executable for its SQLite database and uploaded photos. **Back up and keep this folder** when updating to a newer app build. Each computer's data stays local: sharing an app ZIP does not sync inspections between computers. AI analysis is optional and requires the user to configure their own `OPENAI_API_KEY` environment variable. Never ship an API key in a distributable ZIP. The unsigned experimental executable may be flagged by Windows security controls; signed installers are future work. This is not a production security-reviewed or Xactimate-parity release.
+
 ## Run locally
 
 Install a recent stable Rust toolchain. From the repository root:
